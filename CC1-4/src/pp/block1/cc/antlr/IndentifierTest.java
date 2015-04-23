@@ -9,6 +9,8 @@ public class IndentifierTest {
 	public void succeedingTest() {
 		tester.correct("a01234");
 		tester.correct("QaWdFx");
+		
+		tester.yields("a01234a01234", Indentifier.TOKEN, Indentifier.TOKEN);
 	}
 
 	@Test

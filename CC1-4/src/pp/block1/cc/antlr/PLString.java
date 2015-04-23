@@ -1,4 +1,4 @@
-// Generated from Indentifier.g4 by ANTLR 4.5
+// Generated from PLString.g4 by ANTLR 4.5
 package pp.block1.cc.antlr;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class Indentifier extends Lexer {
+public class PLString extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.5", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -23,7 +23,7 @@ public class Indentifier extends Lexer {
 	};
 
 	public static final String[] ruleNames = {
-		"ALPHA", "ALPHADIGIT", "TOKEN"
+		"TOKEN"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -65,13 +65,13 @@ public class Indentifier extends Lexer {
 	}
 
 
-	public Indentifier(CharStream input) {
+	public PLString(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	@Override
-	public String getGrammarFileName() { return "Indentifier.g4"; }
+	public String getGrammarFileName() { return "PLString.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -86,13 +86,11 @@ public class Indentifier extends Lexer {
 	public ATN getATN() { return _ATN; }
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\3\26\b\1\4\2\t\2"+
-		"\4\3\t\3\4\4\t\4\3\2\3\2\3\3\3\3\5\3\16\n\3\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\2\2\5\3\2\5\2\7\3\3\2\3\4\2C\\c|\24\2\7\3\2\2\2\3\t\3\2\2\2\5\r\3\2"+
-		"\2\2\7\17\3\2\2\2\t\n\t\2\2\2\n\4\3\2\2\2\13\16\4\62;\2\f\16\5\3\2\2\r"+
-		"\13\3\2\2\2\r\f\3\2\2\2\16\6\3\2\2\2\17\20\5\3\2\2\20\21\5\5\3\2\21\22"+
-		"\5\5\3\2\22\23\5\5\3\2\23\24\5\5\3\2\24\25\5\5\3\2\25\b\3\2\2\2\4\2\r"+
-		"\2";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\3\20\b\1\4\2\t\2"+
+		"\3\2\3\2\3\2\3\2\7\2\n\n\2\f\2\16\2\r\13\2\3\2\3\2\2\2\3\3\3\3\2\3\3\2"+
+		"$$\21\2\3\3\2\2\2\3\5\3\2\2\2\5\13\7$\2\2\6\n\n\2\2\2\7\b\7$\2\2\b\n\7"+
+		"$\2\2\t\6\3\2\2\2\t\7\3\2\2\2\n\r\3\2\2\2\13\t\3\2\2\2\13\f\3\2\2\2\f"+
+		"\16\3\2\2\2\r\13\3\2\2\2\16\17\7$\2\2\17\4\3\2\2\2\5\2\t\13\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
