@@ -133,15 +133,14 @@ public class LLCalcImp implements LLCalc {
 		
 		for(Rule r : grammar.getRules()) {
 			result.put(r, new HashSet<Term>());
-			List<Symbol> rhs = r.getRHS();
-			for(Symbol s : rhs) {
+			Symbol s = r.getRHS().get(0);
 				if(first.get(s).contains(Symbol.EMPTY)) {
 					result.get(r).addAll(first.get(s));
 					result.get(r).addAll(follow.get(r.getLHS()));
 				}
 				else {
 					result.get(r).addAll(first.get(s));
-				}
+				
 			}
 		}
 			
@@ -166,6 +165,8 @@ public class LLCalcImp implements LLCalc {
 				
 				for(Term t : setOne) {
 					if(setTwo.contains(t)) {
+						System.out.println(ruleArray[i]);
+						System.out.println(ruleArray[j]);
 						System.out.println(setOne.toString());
 						System.out.println(setTwo.toString());
 						result = false;
