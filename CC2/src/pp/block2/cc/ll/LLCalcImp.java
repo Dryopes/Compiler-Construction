@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import pp.block2.cc.NonTerm;
@@ -36,11 +37,21 @@ public class LLCalcImp implements LLCalc {
 		}
 		
 		while(!result.equals(oldResult)) {
+			oldResult.clear();
+			for(Entry<Symbol, Set<Term>> entry : result.entrySet()) {
+				oldResult.put(entry.getKey(), new HashSet<Term>(entry.getValue()));
+			}
+			
 			for( Rule r : rules) {
+				Symbol A = r.getLHS();
 				List<Symbol> bs = r.getRHS();
+				List<Symbol> rhs = null;
 				for(int i = 1; i < bs.size() && result.get(bs.get(i)).contains(Symbol.EMPTY); i++) {
 					
 				}
+				
+				for(Symbol sym : rhs)
+					result.get(A).add(sym);
 			}
 		}
 		
