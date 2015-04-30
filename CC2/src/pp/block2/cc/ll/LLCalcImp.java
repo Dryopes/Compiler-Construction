@@ -136,11 +136,11 @@ public class LLCalcImp implements LLCalc {
 			List<Symbol> rhs = r.getRHS();
 			for(Symbol s : rhs) {
 				if(first.get(s).contains(Symbol.EMPTY)) {
-					result.get(s).addAll(first.get(s));
-					result.get(s).addAll(follow.get(r.getLHS()));
+					result.get(r).addAll(first.get(s));
+					result.get(r).addAll(follow.get(r.getLHS()));
 				}
 				else {
-					result.get(s).addAll(first.get(s));
+					result.get(r).addAll(first.get(s));
 				}
 			}
 		}
@@ -152,8 +152,12 @@ public class LLCalcImp implements LLCalc {
 	public boolean isLL1() {
 		boolean result = true;
 		Map<Rule, Set<Term>> firstp = getFirstp();
-		Set<Entry<Rule, Set<Term>>> entrySet = firstp.entrySet();		
 		Rule[] ruleArray = firstp.keySet().toArray(new Rule[firstp.keySet().size()]);
+		
+		for(Entry<Rule, Set<Term>> entry : firstp.entrySet()) {
+			System.out.println(entry.toString());
+		}
+		System.out.println("^ EntrySet");
 		
 		for(int i = 0; result && i < ruleArray.length; i++) {
 			for(int j = i+1; result && j < ruleArray.length; j++) {
@@ -161,7 +165,11 @@ public class LLCalcImp implements LLCalc {
 				Set<Term> setTwo = firstp.get(ruleArray[j]);
 				
 				for(Term t : setOne) {
-					result &= !setTwo.contains(t);
+					if(setTwo.contains(t)) {
+						System.out.println(setOne.toString());
+						System.out.println(setTwo.toString());
+						result = false;
+					}
 				}
 			}
 		}
