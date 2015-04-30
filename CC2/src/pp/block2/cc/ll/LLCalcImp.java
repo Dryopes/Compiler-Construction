@@ -1,5 +1,6 @@
 package pp.block2.cc.ll;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,21 +38,33 @@ public class LLCalcImp implements LLCalc {
 		}
 		
 		while(!result.equals(oldResult)) {
+			// Make a deep copy of the previous result
 			oldResult.clear();
 			for(Entry<Symbol, Set<Term>> entry : result.entrySet()) {
 				oldResult.put(entry.getKey(), new HashSet<Term>(entry.getValue()));
 			}
 			
+			// Loop through the rulezzzz (r € R where p == A -> B)
 			for( Rule r : rules) {
-				Symbol A = r.getLHS();
+				Symbol left = r.getLHS();
 				List<Symbol> bs = r.getRHS();
-				List<Symbol> rhs = null;
-				for(int i = 1; i < bs.size() && result.get(bs.get(i)).contains(Symbol.EMPTY); i++) {
-					
+				List<Term> rhs = new ArrayList<Term>();
+				rhs.addAll(result.get(bs.get(0)));
+				rhs.remove(Symbol.EMPTY);
+				
+				int i = 1;
+				for(i = 1; i < bs.size()-1 && result.get(bs.get(i)).contains(Symbol.EMPTY); i++) {
+					rhs.addAll(result.get(bs.get(i)));
+					rhs.remove(Symbol.EMPTY);
 				}
 				
-				for(Symbol sym : rhs)
-					result.get(A).add(sym);
+				if(i == bs.size() -1 && result.get(bs.get(i)).contains(Symbol.EMPTY)) {
+					rhs.add(Symbol.EMPTY);
+				}
+				
+				for(Term t: rhs) {
+					result.get(left).add(t);
+				}
 			}
 		}
 		
