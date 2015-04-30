@@ -61,8 +61,56 @@ public class LLCalcImp implements LLCalc {
 
 	@Override
 	public Map<NonTerm, Set<Term>> getFollow() {
-		// TODO Auto-generated method stub
-		return null;
+		Map<NonTerm, Set<Term>> result = new HashMap<NonTerm, Set<Term>>();
+		Map<NonTerm, Set<Term>> oldResult = new HashMap<NonTerm, Set<Term>>();
+		Set<NonTerm> nonterms = grammar.getNonterminals();
+		Set<Term> terms = grammar.getTerminals();
+		List<Rule> rules = grammar.getRules();
+		Map<Symbol, Set<Term>> first = getFirst();
+
+		for(NonTerm nt : nonterms) {
+			result.put(nt, new HashSet<Term>());
+		}
+		HashSet<Term> eof = new HashSet<Term>();
+		eof.add(Symbol.EOF);
+		result.replace(rules.get(0).getLHS(), eof);
+
+		
+		
+		while(!result.equals(oldResult)) {
+			//Deep copy previous result
+			oldResult.clear();
+			for(Entry<NonTerm, Set<Term>> entry : result.entrySet()) {
+				oldResult.put(entry.getKey(), new HashSet<Term>(entry.getValue()));
+			}
+
+			for (Rule r : rules){
+//				Symbol A = r.getLHS();
+				List<Symbol> B = r.getRHS();
+				Set<Term> trailer = result.get(B);
+				
+				for (int i = B.size()-1; i >= 0; i--){
+					Set<Term> firstBi = first.get(B.get(i));
+				
+						if(	nonterms.contains(B.get(i))){
+							result.get(B.get(i)).addAll(trailer);
+							
+								if(firstBi.contains(Symbol.EMPTY)){
+									firstBi.remove(Symbol.EMPTY);
+									trailer.addAll(firstBi);
+								} else {
+									trailer = firstBi;
+								}
+								
+						} else {
+							trailer = firstBi;
+						}
+				}
+			
+			}
+		}
+	
+		return result;
 	}
 
 	@Override
