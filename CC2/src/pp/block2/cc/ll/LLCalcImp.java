@@ -153,11 +153,17 @@ public class LLCalcImp implements LLCalc {
 	public boolean isLL1() {
 		boolean result = true;
 		Map<Rule, Set<Term>> firstp = getFirstp();
-		Set<Entry<Rule, Set<Term>>> entrySet = firstp.entrySet();
+		Set<Entry<Rule, Set<Term>>> entrySet = firstp.entrySet();		
+		Rule[] ruleArray = firstp.keySet().toArray(new Rule[firstp.keySet().size()]);
 		
-		for(int i = 0; result && i < entrySet.size(); i++) {
-			for(int j = i+1; result && j < entrySet.size(); j++) {
-				//entrySet.
+		for(int i = 0; result && i < ruleArray.length; i++) {
+			for(int j = i+1; result && j < ruleArray.length; j++) {
+				Set<Term> setOne = firstp.get(ruleArray[i]);
+				Set<Term> setTwo = firstp.get(ruleArray[j]);
+				
+				for(Term t : setOne) {
+					result &= !setTwo.contains(t);
+				}
 			}
 		}
 		
