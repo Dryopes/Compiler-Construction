@@ -16,7 +16,7 @@ import pp.block2.cc.Term;
 import pp.block2.cc.ll.Grammar;
 import pp.block2.cc.ll.Grammars;
 import pp.block2.cc.ll.LLCalc;
-import pp.block2.cc.ll.MyLLCalc;
+import pp.block2.cc.ll.LLCalcImp;
 import pp.block2.cc.ll.Sentence;
 
 public class LLCalcTest {
@@ -24,14 +24,14 @@ public class LLCalcTest {
 	@Test
 	public void testSentence() {
 		Grammar g = Grammars.makeSentence();
-		// Without the last (recursive) rule, the grammar is LL-1
-		assertTrue(createCalc(g).isLL1());
+		LLCalc calc = createCalc(g);
+		
 		NonTerm subj = g.getNonterminal("Subject");
 		NonTerm obj = g.getNonterminal("Object");
 		NonTerm sent = g.getNonterminal("Sentence");
 		NonTerm mod = g.getNonterminal("Modifier");
 		g.addRule(mod, mod, mod);
-		LLCalc calc = createCalc(g);
+		
 		// FIRST sets
 		Term adj = g.getTerminal(Sentence.ADJECTIVE);
 		Term noun = g.getTerminal(Sentence.NOUN);
@@ -41,6 +41,12 @@ public class LLCalcTest {
 		assertEquals(set(adj, noun), calc.getFirst().get(subj));
 		assertEquals(set(adj, noun), calc.getFirst().get(obj));
 		assertEquals(set(adj), calc.getFirst().get(mod));
+		
+		
+		// Without the last (recursive) rule, the grammar is LL-1
+		assertTrue(createCalc(g).isLL1());
+		
+
 		// FOLLOW sets
 		assertEquals(set(Symbol.EOF), calc.getFollow().get(sent));
 		assertEquals(set(verb), calc.getFollow().get(subj));
@@ -52,7 +58,7 @@ public class LLCalcTest {
 
 	/** Creates an LL1-calculator for a given grammar. */
 	private LLCalc createCalc(Grammar g) {
-		return ... // your implementation of LLCalc
+		return new LLCalcImp(g); // your implementation of LLCalc
 	}
 
 	@SuppressWarnings("unchecked")
