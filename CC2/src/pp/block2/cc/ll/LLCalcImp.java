@@ -128,14 +128,40 @@ public class LLCalcImp implements LLCalc {
 
 	@Override
 	public Map<Rule, Set<Term>> getFirstp() {
-		// TODO Auto-generated method stub
-		return null;
+		Map<Symbol, Set<Term>> first	= getFirst();
+		Map<NonTerm, Set<Term>> follow	= getFollow();
+		Map<Rule, Set<Term>> result = new HashMap<Rule, Set<Term>>();
+		
+		for(Rule r : grammar.getRules()) {
+			result.put(r, new HashSet<Term>());
+			List<Symbol> rhs = r.getRHS();
+			for(Symbol s : rhs) {
+				if(first.get(s).contains(Symbol.EMPTY)) {
+					result.get(s).addAll(first.get(s));
+					result.get(s).addAll(follow.get(r.getLHS()));
+				}
+				else {
+					result.get(s).addAll(first.get(s));
+				}
+			}
+		}
+			
+		return result;
 	}
 
 	@Override
 	public boolean isLL1() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = true;
+		Map<Rule, Set<Term>> firstp = getFirstp();
+		Set<Entry<Rule, Set<Term>>> entrySet = firstp.entrySet();
+		
+		for(int i = 0; result && i < entrySet.size(); i++) {
+			for(int j = i+1; result && j < entrySet.size(); j++) {
+				//entrySet.
+			}
+		}
+		
+		return result;
 	}
 
 }

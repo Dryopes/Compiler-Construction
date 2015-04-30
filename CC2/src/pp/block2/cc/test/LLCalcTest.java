@@ -24,14 +24,14 @@ public class LLCalcTest {
 	@Test
 	public void testSentence() {
 		Grammar g = Grammars.makeSentence();
-		LLCalc calc = createCalc(g);
-		
+		// Without the last (recursive) rule, the grammar is LL-1
+		//assertTrue(createCalc(g).isLL1());
 		NonTerm subj = g.getNonterminal("Subject");
 		NonTerm obj = g.getNonterminal("Object");
 		NonTerm sent = g.getNonterminal("Sentence");
 		NonTerm mod = g.getNonterminal("Modifier");
 		g.addRule(mod, mod, mod);
-		
+		LLCalc calc = createCalc(g);
 		// FIRST sets
 		Term adj = g.getTerminal(Sentence.ADJECTIVE);
 		Term noun = g.getTerminal(Sentence.NOUN);
@@ -41,12 +41,6 @@ public class LLCalcTest {
 		assertEquals(set(adj, noun), calc.getFirst().get(subj));
 		assertEquals(set(adj, noun), calc.getFirst().get(obj));
 		assertEquals(set(adj), calc.getFirst().get(mod));
-		
-		
-		// Without the last (recursive) rule, the grammar is LL-1
-		assertTrue(createCalc(g).isLL1());
-		
-
 		// FOLLOW sets
 		assertEquals(set(Symbol.EOF), calc.getFollow().get(sent));
 		assertEquals(set(verb), calc.getFollow().get(subj));
