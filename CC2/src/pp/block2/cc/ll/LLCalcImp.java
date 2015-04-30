@@ -98,16 +98,15 @@ public class LLCalcImp implements LLCalc {
 			}
 
 			for (Rule r : rules){
-//				Symbol A = r.getLHS();
+				Symbol A = r.getLHS();
 				List<Symbol> B = r.getRHS();
-				Set<Term> trailer = result.get(B);
+				Set<Term> trailer = result.get(A);
 				
 				for (int i = B.size()-1; i >= 0; i--){
 					Set<Term> firstBi = first.get(B.get(i));
 				
 						if(	nonterms.contains(B.get(i))){
 							result.get(B.get(i)).addAll(trailer);
-							
 								if(firstBi.contains(Symbol.EMPTY)){
 									firstBi.remove(Symbol.EMPTY);
 									trailer.addAll(firstBi);
