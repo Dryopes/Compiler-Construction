@@ -37,10 +37,9 @@ public class LLCalcImp implements LLCalc {
 		
 		while(!result.equals(oldResult)) {
 			for( Rule r : rules) {
-				List<Symbol> right = r.getRHS();
-				rhs.remove(Symbol.EMPTY);
-				for(int i = 1; i < rhs.size() && result.get(rhs.get(i)).contains(Symbol.EMPTY); i++) {
-					rhs
+				List<Symbol> bs = r.getRHS();
+				for(int i = 1; i < bs.size() && result.get(bs.get(i)).contains(Symbol.EMPTY); i++) {
+					
 				}
 			}
 		}
