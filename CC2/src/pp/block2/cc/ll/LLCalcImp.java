@@ -48,7 +48,7 @@ public class LLCalcImp implements LLCalc {
 			for( Rule r : rules) {
 				Symbol left = r.getLHS();
 				List<Symbol> bs = r.getRHS();
-				List<Symbol> rhs = new ArrayList<Symbol>();
+				List<Term> rhs = new ArrayList<Term>();
 				rhs.addAll(result.get(bs.get(0)));
 				rhs.remove(Symbol.EMPTY);
 				
@@ -62,8 +62,8 @@ public class LLCalcImp implements LLCalc {
 					rhs.add(Symbol.EMPTY);
 				}
 				
-				for(Symbol sym : rhs) {
-					result.get(left).add((Term)sym);
+				for(Term t: rhs) {
+					result.get(left).add(t);
 				}
 			}
 		}
