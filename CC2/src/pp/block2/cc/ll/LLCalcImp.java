@@ -152,27 +152,35 @@ public class LLCalcImp implements LLCalc {
 	public boolean isLL1() {
 		boolean result = true;
 		Map<Rule, Set<Term>> firstp = getFirstp();
-		Rule[] ruleArray = firstp.keySet().toArray(new Rule[firstp.keySet().size()]);
+		Set<Entry<Rule, Set<Term>>> entrySet = firstp.entrySet();
+		Map<Symbol, List<Set<Term>>> symbolMap = new HashMap<Symbol, List<Set<Term>>>();
 		
-		for(Entry<Rule, Set<Term>> entry : firstp.entrySet()) {
-			System.out.println(entry.toString());
+		for(Entry<Rule, Set<Term>> entry : entrySet) {
+			Symbol left = entry.getKey().getLHS();
+			if(!symbolMap.containsKey(left))
+				symbolMap.put(left, new ArrayList<Set<Term>>());
+			
+			symbolMap.get(left).add(entry.getValue());
 		}
-		System.out.println("^ EntrySet");
 		
-		for(int i = 0; result && i < ruleArray.length; i++) {
-			for(int j = i+1; result && j < ruleArray.length; j++) {
-				Set<Term> setOne = firstp.get(ruleArray[i]);
-				Set<Term> setTwo = firstp.get(ruleArray[j]);
-				
-				for(Term t : setOne) {
-					if(setTwo.contains(t)) {
-						System.out.println(setOne.toString());
-						System.out.println(setTwo.toString());
-						result = false;
+		Set<Entry<Symbol, List<Set<Term>>>> entrySet2 = symbolMap.entrySet();
+		for(Entry<Symbol, List<Set<Term>>> entry : entrySet2) {
+			List<Set<Term>> setList = entry.getValue();
+			if(setList.size() > 1) {				
+				for(int i = 0; result && i < setList.size(); i++) {
+					for(int j = i+1; result && j < setList.size(); j++) {
+						Set<Term> setOne = setList.get(i);
+						Set<Term> setTwo = setList.get(j);
+						
+						for(Term t : setOne) {
+							result &= !setTwo.contains(t);
+						}
 					}
 				}
 			}
 		}
+		
+		
 		
 		return result;
 	}
