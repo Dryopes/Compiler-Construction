@@ -49,6 +49,31 @@ public class LLCalcTest {
 		// is-LL1-test
 		assertFalse(calc.isLL1());
 	}
+	
+	public void testIf() {
+		Grammar g = Grammars.makeIf();
+		
+		assertTrue(createCalc(g).isLL1());
+		NonTerm subj = g.getNonterminal("Subject");
+		NonTerm obj = g.getNonterminal("Object");
+		NonTerm sent = g.getNonterminal("Sentence");
+		NonTerm mod = g.getNonterminal("Modifier");
+		LLCalc calc = createCalc(g);
+		// FIRST sets
+		Term adj = g.getTerminal(Sentence.ADJECTIVE);
+		Term noun = g.getTerminal(Sentence.NOUN);
+		Term verb = g.getTerminal(Sentence.VERB);
+		Term end = g.getTerminal(Sentence.ENDMARK);
+		assertEquals(set(adj, noun), calc.getFirst().get(sent));
+		assertEquals(set(adj, noun), calc.getFirst().get(subj));
+		assertEquals(set(adj, noun), calc.getFirst().get(obj));
+		assertEquals(set(adj), calc.getFirst().get(mod));
+		// FOLLOW sets
+		assertEquals(set(Symbol.EOF), calc.getFollow().get(sent));
+		assertEquals(set(verb), calc.getFollow().get(subj));
+		assertEquals(set(end), calc.getFollow().get(obj));
+		assertEquals(set(noun, adj), calc.getFollow().get(mod));
+	}
 
 	/** Creates an LL1-calculator for a given grammar. */
 	private LLCalc createCalc(Grammar g) {

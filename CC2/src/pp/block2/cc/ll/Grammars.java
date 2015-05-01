@@ -36,4 +36,25 @@ public class Grammars {
 		g.addRule(mod, adj);
 		return g;
 	}
+	
+	public static Grammar makeIf() {
+		// Define the non-terminals
+		NonTerm stat = new NonTerm("Stat");
+		NonTerm elsepart = new NonTerm("ElsePart");
+		
+		SymbolFactory fact = new SymbolFactory(If.class);
+		Term tIF = fact.getTerminal(If.IF);
+		Term tTHEN = fact.getTerminal(If.THEN);
+		Term tCOND = fact.getTerminal(If.COND);
+		Term tELSE = fact.getTerminal(If.ELSE);
+		Term tASSIGN = fact.getTerminal(If.ASSIGN);
+		
+		// Build the context free grammar
+		Grammar g = new Grammar(sent);
+		g.addRule(stat, tASSIGN);
+		g.addRule(stat, tIF, EXPR?, tTHEN, stat, elsepart);
+		g.addRule(elsepart, tELSE, stat);
+		g.addRule(elsepart, Term.EMPTY);
+		return g;
+	}
 }
