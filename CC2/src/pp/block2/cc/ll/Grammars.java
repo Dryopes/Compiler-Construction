@@ -61,9 +61,10 @@ public class Grammars {
 	public static Grammar makeAbc() {
 		// Define the non-terminals
 		NonTerm l = new NonTerm("L");
-		NonTerm q = new NonTerm("Q");
 		NonTerm r1 = new NonTerm("R1");
 		NonTerm r2 = new NonTerm("R2");
+		NonTerm q1 = new NonTerm("Q1");
+		NonTerm q2 = new NonTerm("Q2");
 		
 		SymbolFactory fact = new SymbolFactory(abc.class);
 		Term tA = fact.getTerminal(abc.A);
@@ -73,13 +74,14 @@ public class Grammars {
 		// Build the context free grammar
 		Grammar g = new Grammar(l);
 		g.addRule(l, r1, tA);
-		g.addRule(l, q, tB, tA);
+		g.addRule(l, q1, tB, tA);
 		g.addRule(r1, tA, tB, tA, r2);
 		g.addRule(r1, tC, tA, tB, tA, r2);
 		g.addRule(r2, tB, tC, r2);
 		g.addRule(r2);
-		g.addRule(q, tB, tB, tC);
-		g.addRule(q, tB, tC);
+		g.addRule(q1, tB);
+		g.addRule(q2, tB, tC);
+		g.addRule(q2, tC);
 		
 		return g;
 	}
