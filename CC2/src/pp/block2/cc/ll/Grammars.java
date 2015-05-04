@@ -50,11 +50,37 @@ public class Grammars {
 		Term tASSIGN = fact.getTerminal(If.ASSIGN);
 		
 		// Build the context free grammar
-		Grammar g = new Grammar(sent);
+		Grammar g = new Grammar(stat);
 		g.addRule(stat, tASSIGN);
-		g.addRule(stat, tIF, EXPR?, tTHEN, stat, elsepart);
+		g.addRule(stat, tIF, tCOND, tTHEN, stat, elsepart);
 		g.addRule(elsepart, tELSE, stat);
 		g.addRule(elsepart, Term.EMPTY);
+		return g;
+	}
+	
+	public static Grammar makeAbc() {
+		// Define the non-terminals
+		NonTerm l = new NonTerm("L");
+		NonTerm q = new NonTerm("Q");
+		NonTerm r1 = new NonTerm("R1");
+		NonTerm r2 = new NonTerm("R2");
+		
+		SymbolFactory fact = new SymbolFactory(abc.class);
+		Term tA = fact.getTerminal(abc.A);
+		Term tB = fact.getTerminal(abc.B);
+		Term tC = fact.getTerminal(abc.C);
+		
+		// Build the context free grammar
+		Grammar g = new Grammar(l);
+		g.addRule(l, r1, tA);
+		g.addRule(l, q, tB, tA);
+		g.addRule(r1, tA, tB, tA, r2);
+		g.addRule(r1, tC, tA, tB, tA, r2);
+		g.addRule(r2, tB, tC, r2);
+		g.addRule(r2);
+		g.addRule(q, tB, tB, tC);
+		g.addRule(q, tB, tC);
+		
 		return g;
 	}
 }
