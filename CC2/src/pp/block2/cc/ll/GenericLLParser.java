@@ -2,8 +2,10 @@ package pp.block2.cc.ll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
@@ -19,7 +21,7 @@ import pp.block2.cc.Term;
 public class GenericLLParser implements Parser {
 	public GenericLLParser(Grammar g) {
 		this.g = g;
-		this.calc = new MyLLCalc(g); // here use your own class
+		this.calc = new LLCalcImp(g); // here use your own class
 	}
 
 	private final Grammar g;
@@ -109,7 +111,37 @@ public class GenericLLParser implements Parser {
 
 	/** Constructs the {@link #ll1Table}. */
 	private Map<NonTerm, List<Rule>> calcLL1Table() {
-		// fill in
+		Map<Rule, Set<Term>> firstp = calc.getFirstp();
+		Map<NonTerm, List<Rule>> result = new HashMap<NonTerm, List<Rule>>();
+		
+		
+		for(NonTerm a : g.getNonterminals()) {			
+			ArrayList<Rule> columns = new ArrayList<Rule>();
+			for(Term w : g.getTerminals()) {
+				//Add term columns
+				columns.add(null);
+			}
+			
+			//Add eof column
+			columns.add(null);
+			result.put(a, columns);
+			
+			for(Rule p : g.getRules()) {
+				if(p.getLHS().equals(a)) {
+					for(Term w : firstp.get(p)) {
+						result.get(w).set(w.getTokenType(), p);
+					}
+					
+					if(firstp.get(p).contains(Symbol.EOF)){
+						result.get(a).set(result.get(a).size()-1, p);
+					}
+				}
+				
+			}
+		}
+		
+		return result;
+
 	}
 
 	/** Map from non-terminals to lists of rules indexed by token type. */
