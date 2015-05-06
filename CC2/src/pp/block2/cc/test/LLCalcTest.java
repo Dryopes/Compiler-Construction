@@ -89,6 +89,42 @@ public class LLCalcTest {
 		
 		
 	}
+	
+	public void testAbc() {
+		Grammar g = Grammars.makeAbc();
+		//NonTerms
+		NonTerm stat = g.getNonterminal("Stat");
+		NonTerm elsePart = g.getNonterminal("ElsePart");
+		
+		//Terminals
+		Term ifT = g.getTerminal(If.IF);
+		Term then = g.getTerminal(If.THEN);
+		Term cond = g.getTerminal(If.COND);
+		Term assign = g.getTerminal(If.ASSIGN);
+		Term elseT = g.getTerminal(If.ELSE);
+		Term eof = Symbol.EOF;
+		Term empty = Symbol.EMPTY;
+		
+		LLCalc calc = createCalc(g);
+		
+		//FIRST
+		Map<Symbol, Set<Term>> first = calc.getFirst();
+		assertEquals(set(assign, ifT), first.get(stat));
+		assertEquals(set(elseT, empty), first.get(elsePart));
+		
+		//FOLLOW
+		Map<NonTerm, Set<Term>> follow = calc.getFollow();
+		assertEquals(set(eof, elseT, empty), follow.get(stat));
+		assertEquals(set(eof, elseT, empty), follow.get(elsePart));
+		
+		//FIRST+
+		Map<Rule, Set<Term>> firstPlus = calc.getFirstp();
+		List<Rule> elsePartRules = g.getRules(elsePart);
+		assertEquals(set(eof), firstPlus.get(elsePartRules.get(0)));
+		assertEquals(set(eof, elseT), firstPlus.get(elsePartRules.get(1)));
+		
+		
+	}
 
 	/** Creates an LL1-calculator for a given grammar. */
 	private LLCalc createCalc(Grammar g) {

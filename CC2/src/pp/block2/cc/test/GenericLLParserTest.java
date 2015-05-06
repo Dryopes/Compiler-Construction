@@ -18,8 +18,8 @@ import pp.block2.cc.ll.GenericLLParser;
 import pp.block2.cc.ll.Grammars;
 import pp.block2.cc.ll.Sentence;
 import pp.block2.cc.ll.SentenceParser;
-import pp.block2.cc.ll.XL;
-import pp.block2.cc.ll.XLParser;
+import pp.block2.cc.ll.abc;
+import pp.block2.cc.ll.AbcParser;
 
 public class GenericLLParserTest {
 	@Test
@@ -32,6 +32,17 @@ public class GenericLLParserTest {
 		fails("all undergraduate students love all compilers");
 		fails("all undergraduate students love love.");
 		fails("all undergraduate students all compilers.");
+	}
+	
+	@Test
+	public void testAbc() {
+		lexerType = abc.class;
+		parser1 = new AbcParser();
+		parser2 = new GenericLLParser(Grammars.makeAbc());
+		compare("abaa");
+		compare("cababcbca");
+		compare("bbcba");
+		fails("bbcca");
 	}
 
 	private void fails(String text) {
