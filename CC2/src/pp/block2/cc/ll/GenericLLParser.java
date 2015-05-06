@@ -47,7 +47,12 @@ public class GenericLLParser implements Parser {
 	 * because the token stream does not contain the expected symbols
 	 */
 	private AST parse(Symbol symb) throws ParseException {
-		// fill in
+
+		if(symb instanceof NonTerm){
+			return parse(lookup((NonTerm)symb));		
+		}else{
+			return new AST((Term) symb, tokens.get(index));
+		}
 	}
 
 	/** Parses the start of the token stream according to a given
@@ -60,7 +65,19 @@ public class GenericLLParser implements Parser {
 	 * because the token stream does not contain the expected symbols
 	 */
 	private AST parse(Rule rule) throws ParseException {
-		// fill in
+		AST subtree = new AST(rule.getLHS());
+		List<Symbol>rhs = rule.getRHS();
+		for(Symbol s : rhs){
+			if(s instanceof Term){
+				subtree.addChild(new AST((Term) s, next()));
+			}else{
+				subtree.addChild(parse(lookup((NonTerm) s)));
+				
+			}
+
+		}
+		
+		return subtree;
 	}
 
 	/** Returns the next token, without moving the token index. */
