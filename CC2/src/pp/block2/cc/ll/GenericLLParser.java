@@ -72,10 +72,14 @@ public class GenericLLParser implements Parser {
 				subtree.addChild(parse(lookup((NonTerm) s)));
 			}else if(((Term)s).getTokenType() == peek().getType()){
 					subtree.addChild(new AST((Term) s, next()));
-			}else{
+			}else if(!(((Term)s) == Symbol.EMPTY)){
+
+				System.out.println(tokens);
+				System.out.println(subtree.toString());
+				System.out.println(s);
 					throw new ParseException("Unexpected token for this Rule");
 				}
-			}
+		}
 		
 		return subtree;
 	}
