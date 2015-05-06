@@ -69,9 +69,10 @@ public class GenericLLParser implements Parser {
 		List<Symbol>rhs = rule.getRHS();
 		for(Symbol s : rhs){
 			if(s instanceof Term){
-				subtree.addChild(new AST((Term) s, peek()));
+				subtree.addChild(new AST((Term) s, next()));
 			}else{
 				subtree.addChild(parse(lookup((NonTerm) s)));
+				
 			}
 
 		}
