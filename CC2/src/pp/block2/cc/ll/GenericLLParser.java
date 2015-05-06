@@ -112,8 +112,7 @@ public class GenericLLParser implements Parser {
 	/** Constructs the {@link #ll1Table}. */
 	private Map<NonTerm, List<Rule>> calcLL1Table() {
 		Map<Rule, Set<Term>> firstp = calc.getFirstp();
-		Map<NonTerm, List<Rule>> result = new HashMap<NonTerm, List<Rule>>();
-		
+		Map<NonTerm, List<Rule>> result = new HashMap<NonTerm, List<Rule>>();		
 		
 		for(NonTerm a : g.getNonterminals()) {			
 			ArrayList<Rule> columns = new ArrayList<Rule>();
@@ -129,7 +128,7 @@ public class GenericLLParser implements Parser {
 			for(Rule p : g.getRules()) {
 				if(p.getLHS().equals(a)) {
 					for(Term w : firstp.get(p)) {
-						result.get(w).set(w.getTokenType(), p);
+						result.get(a).set(w.getTokenType(), p);
 					}
 					
 					if(firstp.get(p).contains(Symbol.EOF)){
