@@ -68,14 +68,14 @@ public class GenericLLParser implements Parser {
 		AST subtree = new AST(rule.getLHS());
 		List<Symbol>rhs = rule.getRHS();
 		for(Symbol s : rhs){
-			if(s instanceof Term){
-				subtree.addChild(new AST((Term) s, next()));
-			}else{
+			if(s instanceof NonTerm){	
 				subtree.addChild(parse(lookup((NonTerm) s)));
-				
+			}else if(((Term)s).getTokenType() == peek().getType()){
+					subtree.addChild(new AST((Term) s, next()));
+			}else{
+					throw new ParseException("Unexpected token for this Rule");
+				}
 			}
-
-		}
 		
 		return subtree;
 	}
