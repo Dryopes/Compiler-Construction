@@ -3,6 +3,7 @@ package pp.block2.cc.ll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,9 +49,8 @@ public class LLCalcImp implements LLCalc {
 			for( Rule r : rules) {
 				Symbol left = r.getLHS();
 				List<Symbol> bs = r.getRHS();
-				List<Term> rhs = new ArrayList<Term>();
-				rhs.addAll(result.get(bs.get(0)));
-				rhs.remove(Symbol.EMPTY);
+				List<Term> rhs = new ArrayList<Term>();				
+				rhs.addAll(result.get(bs.get(0)));				
 				
 				int i = 1;
 				for(i = 1; i < bs.size()-1 && result.get(bs.get(i)).contains(Symbol.EMPTY); i++) {
@@ -77,18 +77,13 @@ public class LLCalcImp implements LLCalc {
 		Map<NonTerm, Set<Term>> result = new HashMap<NonTerm, Set<Term>>();
 		Map<NonTerm, Set<Term>> oldResult = new HashMap<NonTerm, Set<Term>>();
 		Set<NonTerm> nonterms = grammar.getNonterminals();
-		Set<Term> terms = grammar.getTerminals();
 		List<Rule> rules = grammar.getRules();
 		Map<Symbol, Set<Term>> first = getFirst();
 
 		for(NonTerm nt : nonterms) {
 			result.put(nt, new HashSet<Term>());
 		}
-		HashSet<Term> eof = new HashSet<Term>();
-		eof.add(Symbol.EOF);
-		result.replace(rules.get(0).getLHS(), eof);
-
-		
+		result.get(rules.get(0).getLHS()).add(Symbol.EOF);		
 		
 		while(!result.equals(oldResult)) {
 			//Deep copy previous result
@@ -100,16 +95,18 @@ public class LLCalcImp implements LLCalc {
 			for (Rule r : rules){
 				Symbol A = r.getLHS();
 				List<Symbol> B = r.getRHS();
-				Set<Term> trailer = result.get(A);
+				
+				Set<Term> trailer = new HashSet<Term>();
+				trailer.addAll(result.get(A));
 				
 				for (int i = B.size()-1; i >= 0; i--){
-					Set<Term> firstBi = first.get(B.get(i));
+					Set<Term> firstBi = getFirst().get(B.get(i));
 				
 						if(	nonterms.contains(B.get(i))){
 							result.get(B.get(i)).addAll(trailer);
 								if(firstBi.contains(Symbol.EMPTY)){
-									firstBi.remove(Symbol.EMPTY);
 									trailer.addAll(firstBi);
+									trailer.remove(Symbol.EMPTY);
 								} else {
 									trailer = firstBi;
 								}
@@ -134,13 +131,13 @@ public class LLCalcImp implements LLCalc {
 		for(Rule r : grammar.getRules()) {
 			result.put(r, new HashSet<Term>());
 			Symbol s = r.getRHS().get(0);
-			
 				if(first.get(s).contains(Symbol.EMPTY)) {
 					result.get(r).addAll(first.get(s));
 					result.get(r).addAll(follow.get(r.getLHS()));
 				}
 				else {
 					result.get(r).addAll(first.get(s));
+					
 				}
 		}
 			

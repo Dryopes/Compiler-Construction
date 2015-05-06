@@ -3,6 +3,7 @@
  */
 package pp.block2.cc.ll;
 
+import pp.block2.cc.Symbol;
 import pp.block2.cc.SymbolFactory;
 import pp.block2.cc.NonTerm;
 import pp.block2.cc.Term;
@@ -78,8 +79,8 @@ public class Grammars {
 		g.addRule(r1, tA, tB, tA, r2);
 		g.addRule(r1, tC, tA, tB, tA, r2);
 		g.addRule(r2, tB, tC, r2);
-		g.addRule(r2);
-		g.addRule(q1, tB);
+		g.addRule(r2, Symbol.EMPTY);
+		g.addRule(q1, tB, q2);
 		g.addRule(q2, tB, tC);
 		g.addRule(q2, tC);
 		

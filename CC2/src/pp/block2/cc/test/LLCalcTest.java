@@ -22,6 +22,7 @@ import pp.block2.cc.ll.LLCalc;
 import pp.block2.cc.ll.LLCalcImp;
 import pp.block2.cc.ll.Rule;
 import pp.block2.cc.ll.Sentence;
+import pp.block2.cc.ll.abc;
 
 public class LLCalcTest {
 	/** Tests the LL-calculator for the Sentence grammar. */
@@ -54,6 +55,7 @@ public class LLCalcTest {
 		assertFalse(calc.isLL1());
 	}
 	
+	@Test
 	public void testIf() {
 		Grammar g = Grammars.makeIf();
 		//NonTerms
@@ -78,30 +80,38 @@ public class LLCalcTest {
 		
 		//FOLLOW
 		Map<NonTerm, Set<Term>> follow = calc.getFollow();
-		assertEquals(set(eof, elseT, empty), follow.get(stat));
-		assertEquals(set(eof, elseT, empty), follow.get(elsePart));
+		assertEquals(set(eof, elseT), follow.get(stat));
+		assertEquals(set(eof, elseT), follow.get(elsePart));
 		
 		//FIRST+
 		Map<Rule, Set<Term>> firstPlus = calc.getFirstp();
 		List<Rule> elsePartRules = g.getRules(elsePart);
-		assertEquals(set(eof), firstPlus.get(elsePartRules.get(0)));
-		assertEquals(set(eof, elseT), firstPlus.get(elsePartRules.get(1)));
+		List<Rule> statRules = g.getRules(stat);
 		
+		assertEquals(set(elseT), firstPlus.get(elsePartRules.get(0)));
+		assertEquals(set(eof, elseT, empty), firstPlus.get(elsePartRules.get(1)));
 		
+		assertEquals(set(assign), firstPlus.get(statRules.get(0)));
+		assertEquals(set(ifT), firstPlus.get(statRules.get(1)));	
+		
+		//LL1
+		assertFalse(calc.isLL1());
 	}
 	
+	@Test
 	public void testAbc() {
 		Grammar g = Grammars.makeAbc();
 		//NonTerms
-		NonTerm stat = g.getNonterminal("Stat");
-		NonTerm elsePart = g.getNonterminal("ElsePart");
+		NonTerm l = g.getNonterminal("L");
+		NonTerm r1 = g.getNonterminal("R1");
+		NonTerm r2 = g.getNonterminal("R2");
+		NonTerm q1 = g.getNonterminal("Q1");
+		NonTerm q2 = g.getNonterminal("Q2");
 		
 		//Terminals
-		Term ifT = g.getTerminal(If.IF);
-		Term then = g.getTerminal(If.THEN);
-		Term cond = g.getTerminal(If.COND);
-		Term assign = g.getTerminal(If.ASSIGN);
-		Term elseT = g.getTerminal(If.ELSE);
+		Term tA = g.getTerminal(abc.A);
+		Term tB = g.getTerminal(abc.B);
+		Term tC = g.getTerminal(abc.C);
 		Term eof = Symbol.EOF;
 		Term empty = Symbol.EMPTY;
 		
@@ -109,21 +119,39 @@ public class LLCalcTest {
 		
 		//FIRST
 		Map<Symbol, Set<Term>> first = calc.getFirst();
-		assertEquals(set(assign, ifT), first.get(stat));
-		assertEquals(set(elseT, empty), first.get(elsePart));
+		assertEquals(set(tA, tB, tC), 	first.get(l));
+		assertEquals(set(tA, tC), 		first.get(r1));
+		assertEquals(set(tB, empty), 	first.get(r2));
+		assertEquals(set(tB), 			first.get(q1));
+		assertEquals(set(tB, tC), 		first.get(q2));
 		
 		//FOLLOW
 		Map<NonTerm, Set<Term>> follow = calc.getFollow();
-		assertEquals(set(eof, elseT, empty), follow.get(stat));
-		assertEquals(set(eof, elseT, empty), follow.get(elsePart));
+		assertEquals(set(eof), 	follow.get(l));
+		assertEquals(set(tA), 	follow.get(r1));
+		assertEquals(set(tA), 	follow.get(r2));
+		assertEquals(set(tB), 	follow.get(q1));
+		assertEquals(set(tB), 	follow.get(q2));
 		
 		//FIRST+
 		Map<Rule, Set<Term>> firstPlus = calc.getFirstp();
-		List<Rule> elsePartRules = g.getRules(elsePart);
-		assertEquals(set(eof), firstPlus.get(elsePartRules.get(0)));
-		assertEquals(set(eof, elseT), firstPlus.get(elsePartRules.get(1)));
+		List<Rule> lRules 	= g.getRules(l);
+		List<Rule> r1Rules 	= g.getRules(r1);
+		List<Rule> r2Rules 	= g.getRules(r2);
+		List<Rule> q1Rules 	= g.getRules(q1);
+		List<Rule> q2Rules 	= g.getRules(q2);
 		
+		assertEquals(set(tA, tC), 	firstPlus.get(lRules.get(0)));
+		assertEquals(set(tB), 		firstPlus.get(lRules.get(1)));
+		assertEquals(set(tA), 		firstPlus.get(r1Rules.get(0)));
+		assertEquals(set(tC), 		firstPlus.get(r1Rules.get(1)));
+		assertEquals(set(tB), 		firstPlus.get(r2Rules.get(0)));
+		assertEquals(set(tA, empty),firstPlus.get(r2Rules.get(1)));
+		assertEquals(set(tB),		firstPlus.get(q1Rules.get(0)));
+		assertEquals(set(tB), 		firstPlus.get(q2Rules.get(0)));
+		assertEquals(set(tC), 		firstPlus.get(q2Rules.get(1)));
 		
+		assertTrue(calc.isLL1());
 	}
 
 	/** Creates an LL1-calculator for a given grammar. */
