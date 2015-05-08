@@ -32,10 +32,10 @@ public class CalculatorTest {
 		assertEquals(calc.calculate(scan("2 + 3 * 3")), new BigInteger("11"));
 		assertEquals(calc.calculate(scan("2^2^3")), new BigInteger("256"));
 		assertEquals(calc.calculate(scan("5 + -2")), new BigInteger("3"));
-		assertEquals(calc.calculate(scan("5 + 2 * 3^2 - -5")), new BigInteger("28"));
+		assertEquals(calc.calculate(scan("5 + 2 * 3^2 - ---5")), new BigInteger("28"));
 		assertEquals(calc.calculate(scan("10/2")), new BigInteger("5"));
 		assertEquals(calc.calculate(scan("1+2^(10/2)")), new BigInteger("33"));
-		assertEquals(calc.calculate(scan("2^10/2")), new BigInteger("205"));
+		assertEquals(calc.calculate(scan("1+2^10/2")), new BigInteger("513"));
 		assertEquals(calc.calculate(scan("-10/2")), new BigInteger("-5"));
 		assertEquals(calc.calculate(scan("-(10/2)")), new BigInteger("-5"));
 		assertEquals(calc.calculate(scan("-10/-2")), new BigInteger("5"));

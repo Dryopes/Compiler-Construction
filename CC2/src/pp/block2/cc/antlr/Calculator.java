@@ -28,15 +28,13 @@ public class Calculator
 	private boolean foundError;	
 	private BigInteger result;
 
-	public BigInteger calculate(Lexer lexer) throws ParseException {
+	public BigInteger calculate(Lexer lexer) {
 		foundError = false;
 		solution = new ParseTreeProperty<String>();
 		
-		SentenceParser parser = new SentenceParser(new CommonTokenStream(lexer));
-		ParseTree tree = parser.sentence();
+		ArithmeticParser parser = new ArithmeticParser(new CommonTokenStream(lexer));
+		ParseTree tree = parser.exp();		
 		new ParseTreeWalker().walk(this, tree);		
-		
-		if(foundError) throw new ParseException("WE HAVE FOUND AN ERROR!");
 		
 		return new BigInteger(solution.get(tree));
 	}
@@ -60,9 +58,9 @@ public class Calculator
 		BigInteger value1 = new BigInteger(solution.get(ctx.getChild(0)));
 		BigInteger value2 = new BigInteger(solution.get(ctx.getChild(2)));
 		
-		if(solution.get(ctx.getChild(1)) == "*")
+		if(solution.get(ctx.getChild(1)).equals("*"))
 			solution.put(ctx, value1.multiply(value2).toString());
-		else if(solution.get(ctx.getChild(1)) == "/")
+		else if(solution.get(ctx.getChild(1)).equals("/"))
 			solution.put(ctx, value1.divide(value2).toString());
 	}
 
@@ -70,10 +68,12 @@ public class Calculator
 		BigInteger value1 = new BigInteger(solution.get(ctx.getChild(0)));
 		BigInteger value2 = new BigInteger(solution.get(ctx.getChild(2)));
 		
-		if(solution.get(ctx.getChild(1)) == "+")
+		if(solution.get(ctx.getChild(1)).equals("+"))
 			solution.put(ctx, value1.add(value2).toString());
-		else if(solution.get(ctx.getChild(1)) == "-")
+		else if(solution.get(ctx.getChild(1)).equals("-"))
 			solution.put(ctx, value1.subtract(value2).toString());
+		else
+			System.out.println("HELP! " + solution.get(ctx.getChild(1)));
 	}
 
 	@Override public void exitNegate(ArithmeticParser.NegateContext ctx) { 
@@ -88,7 +88,7 @@ public class Calculator
 	
 	@Override
 	public void visitTerminal(TerminalNode node) {
-		solution.put(node, node.getSymbol().getText());
+		solution.put(node, node.getText());
 	}
 
 	@Override
