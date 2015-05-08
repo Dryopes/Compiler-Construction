@@ -133,7 +133,7 @@ public class GenericLLParser implements Parser {
 		
 		for(NonTerm a : g.getNonterminals()) {			
 			ArrayList<Rule> columns = new ArrayList<Rule>();
-			for(Term w : g.getTerminals()) {
+			for(Term w: g.getTerminals()) {
 				//Add term columns
 				columns.add(null);
 			}

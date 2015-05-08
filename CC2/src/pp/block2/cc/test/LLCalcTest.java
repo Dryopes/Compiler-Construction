@@ -64,8 +64,6 @@ public class LLCalcTest {
 		
 		//Terminals
 		Term ifT = g.getTerminal(If.IF);
-		Term then = g.getTerminal(If.THEN);
-		Term cond = g.getTerminal(If.COND);
 		Term assign = g.getTerminal(If.ASSIGN);
 		Term elseT = g.getTerminal(If.ELSE);
 		Term eof = Symbol.EOF;

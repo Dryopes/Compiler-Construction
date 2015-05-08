@@ -3,7 +3,6 @@ package pp.block2.cc.ll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -78,8 +77,7 @@ public class LLCalcImp implements LLCalc {
 		Map<NonTerm, Set<Term>> oldResult = new HashMap<NonTerm, Set<Term>>();
 		Set<NonTerm> nonterms = grammar.getNonterminals();
 		List<Rule> rules = grammar.getRules();
-		Map<Symbol, Set<Term>> first = getFirst();
-
+		
 		for(NonTerm nt : nonterms) {
 			result.put(nt, new HashSet<Term>());
 		}
@@ -139,6 +137,7 @@ public class LLCalcImp implements LLCalc {
 					result.get(r).addAll(first.get(s));
 					
 				}
+
 		}
 			
 		return result;
