@@ -2,12 +2,12 @@ grammar Arithmetic;
 
 @header{package pp.block2.cc.antlr;}
 
-exp: '(' exp ')'
-	| <assoc=right> exp '^' exp
-	| exp ('*' | '/') exp
-	| exp ('+' | '-') exp
-	| '-' exp
-	| NUM
+exp: '(' exp ')'					#brac
+	| <assoc=right> exp '^' exp		#op1
+	| exp ('*' | '/') exp			#op2
+	| exp ('+' | '-') exp			#op3
+	| '-' exp						#negate
+	| NUM							#number
 	;
 
 NUM: ('0' .. '9')+;

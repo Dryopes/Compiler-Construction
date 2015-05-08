@@ -80,24 +80,105 @@ public class ArithmeticParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class ExpContext extends ParserRuleContext {
+		public ExpContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_exp; }
+	 
+		public ExpContext() { }
+		public void copyFrom(ExpContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class Op2Context extends ExpContext {
 		public List<ExpContext> exp() {
 			return getRuleContexts(ExpContext.class);
 		}
 		public ExpContext exp(int i) {
 			return getRuleContext(ExpContext.class,i);
 		}
-		public TerminalNode NUM() { return getToken(ArithmeticParser.NUM, 0); }
-		public ExpContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_exp; }
+		public Op2Context(ExpContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterExp(this);
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterOp2(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitExp(this);
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitOp2(this);
+		}
+	}
+	public static class NumberContext extends ExpContext {
+		public TerminalNode NUM() { return getToken(ArithmeticParser.NUM, 0); }
+		public NumberContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterNumber(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitNumber(this);
+		}
+	}
+	public static class Op1Context extends ExpContext {
+		public List<ExpContext> exp() {
+			return getRuleContexts(ExpContext.class);
+		}
+		public ExpContext exp(int i) {
+			return getRuleContext(ExpContext.class,i);
+		}
+		public Op1Context(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterOp1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitOp1(this);
+		}
+	}
+	public static class Op3Context extends ExpContext {
+		public List<ExpContext> exp() {
+			return getRuleContexts(ExpContext.class);
+		}
+		public ExpContext exp(int i) {
+			return getRuleContext(ExpContext.class,i);
+		}
+		public Op3Context(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterOp3(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitOp3(this);
+		}
+	}
+	public static class NegateContext extends ExpContext {
+		public ExpContext exp() {
+			return getRuleContext(ExpContext.class,0);
+		}
+		public NegateContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterNegate(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitNegate(this);
+		}
+	}
+	public static class BracContext extends ExpContext {
+		public ExpContext exp() {
+			return getRuleContext(ExpContext.class,0);
+		}
+		public BracContext(ExpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).enterBrac(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ArithmeticListener ) ((ArithmeticListener)listener).exitBrac(this);
 		}
 	}
 
@@ -121,6 +202,10 @@ public class ArithmeticParser extends Parser {
 			switch (_input.LA(1)) {
 			case T__6:
 				{
+				_localctx = new NegateContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+
 				setState(3);
 				match(T__6);
 				setState(4);
@@ -129,6 +214,9 @@ public class ArithmeticParser extends Parser {
 				break;
 			case T__0:
 				{
+				_localctx = new BracContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(5);
 				match(T__0);
 				setState(6);
@@ -139,6 +227,9 @@ public class ArithmeticParser extends Parser {
 				break;
 			case NUM:
 				{
+				_localctx = new NumberContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(9);
 				match(NUM);
 				}
@@ -159,7 +250,7 @@ public class ArithmeticParser extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
 						{
-						_localctx = new ExpContext(_parentctx, _parentState);
+						_localctx = new Op1Context(new ExpContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_exp);
 						setState(12);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
@@ -171,7 +262,7 @@ public class ArithmeticParser extends Parser {
 						break;
 					case 2:
 						{
-						_localctx = new ExpContext(_parentctx, _parentState);
+						_localctx = new Op2Context(new ExpContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_exp);
 						setState(15);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
@@ -188,7 +279,7 @@ public class ArithmeticParser extends Parser {
 						break;
 					case 3:
 						{
-						_localctx = new ExpContext(_parentctx, _parentState);
+						_localctx = new Op3Context(new ExpContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_exp);
 						setState(18);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
