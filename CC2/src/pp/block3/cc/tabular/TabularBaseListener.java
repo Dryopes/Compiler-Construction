@@ -1,10 +1,15 @@
 // Generated from Tabular.g4 by ANTLR 4.5
-package pp.block3.cc.symbol;
+package pp.block3.cc.tabular;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
+import pp.block3.cc.symbol.MySymbolTable;
 
 /**
  * This class provides an empty implementation of {@link TabularListener},
@@ -12,78 +17,115 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  * of the available methods.
  */
 public class TabularBaseListener implements TabularListener {
+	
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTable(TabularParser.TableContext ctx) { }
+	@Override public void enterLatex(TabularParser.LatexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTable(TabularParser.TableContext ctx) { }
+	@Override public void exitLatex(TabularParser.LatexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBegintable(TabularParser.BegintableContext ctx) { }
+	@Override public void enterBegin(TabularParser.BeginContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBegintable(TabularParser.BegintableContext ctx) { }
+	@Override public void exitBegin(TabularParser.BeginContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEndtable(TabularParser.EndtableContext ctx) { }
+	@Override public void enterBegType(TabularParser.BegTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEndtable(TabularParser.EndtableContext ctx) { }
+	@Override public void exitBegType(TabularParser.BegTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterContent(TabularParser.ContentContext ctx) { }
+	@Override public void enterArg(TabularParser.ArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitContent(TabularParser.ContentContext ctx) { }
+	@Override public void exitArg(TabularParser.ArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterRow(TabularParser.RowContext ctx) { }
+	@Override public void enterTabLine(TabularParser.TabLineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitRow(TabularParser.RowContext ctx) { }
+	@Override public void exitTabLine(TabularParser.TabLineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEntry(TabularParser.EntryContext ctx) { }
+	@Override public void enterText(TabularParser.TextContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEntry(TabularParser.EntryContext ctx) { }
+	@Override public void exitText(TabularParser.TextContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAnd(TabularParser.AndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAnd(TabularParser.AndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEnd(TabularParser.EndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEnd(TabularParser.EndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEndType(TabularParser.EndTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEndType(TabularParser.EndTypeContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
