@@ -1,0 +1,13 @@
+int i = a > q;
+int j = 0;
+
+if(3>2) {
+	i = a + b;
+}
+
+while(i != j) {
+	i = i + 1;
+	j = j - 1;	
+}
+
+int a = i;
