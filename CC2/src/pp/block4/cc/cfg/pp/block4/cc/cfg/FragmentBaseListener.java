@@ -1,5 +1,6 @@
 // Generated from Fragment.g4 by ANTLR 4.5
 package pp.block4.cc.cfg;
+package pp.block4.cc.cfg;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
