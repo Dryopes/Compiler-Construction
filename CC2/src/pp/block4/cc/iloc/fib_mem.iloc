@@ -1,0 +1,27 @@
+// n = 0, x = 4, y = 8 and z = 12
+start:	loadI @mem => r_mem
+		
+cond: 	loadAI r_mem, 0 => r_tmp
+		loadI 1 => r_tmp2
+		cmp_GT r_tmp, r_tmp2 => r_tmp
+		cbr r_tmp -> body, end
+		
+body:	loadAI r_mem, 4 => r_tmp
+		loadAI r_mem, 8 => r_tmp2
+		add r_tmp, r_tmp2 => r_tmp
+		storeAI r_tmp => r_mem, 12
+		
+		loadAI r_mem, 8 => r_tmp
+		storeAI r_tmp => r_mem, 4
+		
+		loadAI r_mem, 12 => r_tmp
+		storeAI r_tmp => r_mem, 8
+		
+		loadAI r_mem, 0 => r_tmp
+		subI r_tmp, 1 => r_tmp
+		storeAI r_tmp => r_mem, 0
+		
+		jumpI -> cond
+		
+end:	loadAI r_mem, 12 => r_tmp
+		out "z: ", r_tmp
