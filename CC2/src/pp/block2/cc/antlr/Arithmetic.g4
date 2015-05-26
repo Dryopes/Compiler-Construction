@@ -9,6 +9,8 @@ exp: '(' exp ')'					#brac
 	| '-' exp						#negate
 	| NUM							#number
 	;
+E: ;
+
 
 NUM: ('0' .. '9')+;
 

@@ -26,9 +26,7 @@ public class BottomUpCFGBuilder extends FragmentBaseListener {
 	/** The CFG being built. */
 	private Graph graph;
 	
-	private Stack<List<Node>> cfgs;
-	
-	
+	private Stack<List<Node>> cfgs;	
 
 	@Override public void exitBlockStat(@NotNull FragmentParser.BlockStatContext ctx) {
 		if(ctx.getChildCount() == 2){
