@@ -19,7 +19,7 @@ public class FibTest {
 	
 	@Test
 	public void testFib() {
-		int testlength = 46; //Na 46 komt overflow errorzz
+		int testlength = 46; //Na 45 komt overflow errorzz
 		
 		Program progReg = parse("fib_reg");
 		Program progMem = parse("fib_mem");
@@ -41,27 +41,46 @@ public class FibTest {
 	@Test(timeout = 1000)
 	public void test_fibreg() {
 		Program p = parse("fib_reg");
-		Machine c = new Machine();
-		c.setNum("n", 10);
-		
-		new Simulator(p, c).run();
-		if (SHOW) {
-			System.out.println(c);
+		for(int i = 0; i < 46; i++) {
+			Machine c = new Machine();
+			c.setNum("n", i);
+			
+			new Simulator(p, c).run();
+			if (SHOW) {
+				System.out.println(c);
+			}
+			assertEquals(fib(i), c.getReg("r_z"));
 		}
-		assertEquals(89, c.getReg("r_z"));
 	}
 	
 	@Test(timeout = 1000)
 	public void test_fibmem() {
 		Program p = parse("fib_mem");
-		Machine c = new Machine();
-		c.init("mem", new int[]{10, 1, 1, 1});
 		
-		new Simulator(p, c).run();
-		if (SHOW) {
-			System.out.println(c);
+		for(int i = 0; i < 46; i++) {
+			Machine c = new Machine();
+			c.init("mem", new int[]{i, 1, 1, 1});
+			
+			new Simulator(p, c).run();
+			if (SHOW) {
+				System.out.println(c);
+			}
+			assertEquals(fib(i), c.getReg("r_tmp"));
 		}
-		assertEquals(89, c.getReg("r_tmp"));
+	}
+	
+	
+	private int fib(int n) {
+		int x = 1;
+		int y = 1;
+		int z = 1;
+		while(n > 1) {
+			z = x + y;
+			x = y;
+			y = z;
+			n = n - 1;
+		}
+		return z;
 	}
 
 	Program parse(String filename) {
