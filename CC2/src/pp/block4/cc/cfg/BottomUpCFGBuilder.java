@@ -41,8 +41,8 @@ public class BottomUpCFGBuilder extends FragmentBaseListener {
 			for(int kids = ctx.stat().size(); kids > 0; kids--){
 				List<Node> stackStart = cfgs.pop();
 				stackStart.get(1).addEdge(stackEnd.get(0));
-			stackEnd.remove(0);
-			stackEnd.add(0, stackStart.get(0));
+				stackEnd.remove(0);
+				stackEnd.add(0, stackStart.get(0));
 			}
 			cfgs.add(stackEnd);
 		}

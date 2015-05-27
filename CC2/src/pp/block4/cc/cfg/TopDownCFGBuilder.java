@@ -106,7 +106,7 @@ public class TopDownCFGBuilder extends FragmentBaseListener {
 		if(nodes[1] != null)
 			nodes[0].addEdge(nodes[1]);
 		
-		System.out.println("While: " + Arrays.toString(stack.peek()));
+		//System.out.println("While: " + Arrays.toString(stack.peek()));
 	}
 	
 	@Override

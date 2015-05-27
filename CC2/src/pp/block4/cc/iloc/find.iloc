@@ -1,7 +1,6 @@
-start:	loadI 0 => r_x
+start:	in "Geef x: " => r_x
 		loadI 0 => r_i
 		loadI @alength => r_len
-		in "x" => r_x
 for:	cmp_LT r_i, r_len => r_cmp
 		cbr r_cmp -> body, end
 body:	multI r_i,4 => r_a         // multiply by size of int

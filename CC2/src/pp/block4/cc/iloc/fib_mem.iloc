@@ -1,4 +1,4 @@
-// n = 0, x = 4, y = 8 and z = 12
+// n = IETS, x = 1, y = 1 and z = 1
 start:	loadI @mem => r_mem
 		
 cond: 	loadAI r_mem, 0 => r_tmp
