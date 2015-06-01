@@ -136,6 +136,15 @@ public class Checker extends SimplePascalBaseListener {
 		setEntry(ctx, entry(ctx.var(0)));
 	}
 	
+	@Override 
+	public void exitVar(SimplePascalParser.VarContext ctx) {		
+		Type type = getType(ctx.type());
+		for(int i = 0; i < ctx.ID().size(); i++) {
+			this.scope.put(ctx.ID(i).getText(), type);
+		}
+		setEntry(ctx, ctx);
+	}
+	
 	@Override
 	public void exitIntType(IntTypeContext ctx) {
 		setType(ctx, Type.INT);
@@ -149,42 +158,26 @@ public class Checker extends SimplePascalBaseListener {
 	}
 	
 	@Override 
-	public void exitVar(SimplePascalParser.VarContext ctx) {
-		Type type = getType(ctx.type());
-		for(int i = 0; i < ctx.ID().size(); i++) {
-			this.scope.put(ctx.ID(i).getText(), type);
-		}
-		//setType(ctx, getType(ctx.type()));
-		setEntry(ctx, ctx);
-	}
-	
-	@Override 
 	public void exitAssStat(SimplePascalParser.AssStatContext ctx) { 
 		checkType(ctx.expr(), getType(ctx.target()));
-		setEntry(ctx, ctx);
+		setEntry(ctx, entry(ctx.expr()));
+		setOffset(ctx.target(), scope.offset(ctx.target().getText()));
 	}
 	
 	@Override 
 	public void exitIfStat(SimplePascalParser.IfStatContext ctx) { 
 		checkType(ctx.expr(), Type.BOOL);
 		setEntry(ctx, entry(ctx.stat(0)));
-		setEntry(ctx, entry(ctx.stat(1)));
 	}
 	
 	@Override 
 	public void exitWhileStat(SimplePascalParser.WhileStatContext ctx) { 
 		checkType(ctx.expr(), Type.BOOL);
-		setEntry(ctx, entry(ctx.expr()));
+		setEntry(ctx, entry(ctx.stat()));
 	}
 	
 	@Override public void exitBlock(SimplePascalParser.BlockContext ctx) {
-		ParserRuleContext node = ctx;
-		for(int i = 0; i < ctx.stat().size(); i++) {
-			setEntry(node, entry(ctx.stat(i)));
-			node = ctx.stat(i);
-		}
-		
-		
+		setEntry(ctx, entry(ctx.stat(0)));		
 	}
 	
 	@Override public void exitBlockStat(SimplePascalParser.BlockStatContext ctx) { 
@@ -193,18 +186,9 @@ public class Checker extends SimplePascalBaseListener {
 	
 	
 	@Override public void exitBody(SimplePascalParser.BodyContext ctx) { 
-		ParserRuleContext node = ctx;
-		for(int i = 0; i < ctx.decl().size(); i++) {
-			setEntry(node, entry(ctx.decl(i)));
-			node = ctx.decl(i);
-		}
-		setEntry(node, entry(ctx.block()));
+		setEntry(ctx, entry(ctx.block()));
 	}
 	
-	/*@Override 
-	public void exitProgram(SimplePascalParser.ProgramContext ctx) { 
-		setEntry(ctx, entry(ctx.body()));
-	}*/
 	
 	/*
 	 * END END END END
