@@ -17,10 +17,20 @@ import pp.iloc.model.Program;
 
 @SuppressWarnings("javadoc")
 public class SimpleGeneratorTest {
-	private final static String BASE_DIR = "pp/block5/cc/sample";
+	private final static String BASE_DIR = "src/pp/block5/cc/sample";
 	private final static String EXT = ".pascal";
 	private final SimplePascalCompiler compiler = SimplePascalCompiler
 			.instance();
+	
+	@Test
+	public void testBasic() throws IOException, ParseException {
+		Program prog = compile("basic");
+		System.out.println("Pretty Print Basic:");
+		System.out.println(prog.prettyPrint());
+		String out = sim(prog, "");
+		System.out.println("Out: " + out);
+		
+	}
 
 	@Test
 	public void testGCD() throws IOException, ParseException {

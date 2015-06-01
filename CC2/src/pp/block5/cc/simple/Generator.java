@@ -6,11 +6,14 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 import pp.block5.cc.pascal.SimplePascalBaseVisitor;
+import pp.block5.cc.pascal.SimplePascalParser;
+import pp.block5.cc.pascal.SimplePascalParser.ProgramContext;
 import pp.iloc.Simulator;
 import pp.iloc.model.Label;
 import pp.iloc.model.Num;
 import pp.iloc.model.Op;
 import pp.iloc.model.OpCode;
+import pp.iloc.model.OpList;
 import pp.iloc.model.Operand;
 import pp.iloc.model.Program;
 import pp.iloc.model.Reg;
@@ -41,8 +44,206 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 		this.labels = new ParseTreeProperty<>();
 		this.regCount = 0;
 		tree.accept(this);
+		System.out.println("(generator)Pretty Print: " + prog.prettyPrint());
 		return this.prog;
 	}
+	/*
+	 * --
+	 * TOEGEVOEGD
+	 * --
+	 */
+	
+	/*
+	 * PROGRAM
+	 */
+	
+	@Override public Op visitProgram(SimplePascalParser.ProgramContext ctx) { 
+		System.out.println("Program Visited");
+		return visitChildren(ctx); 
+	}
+	
+	@Override public Op visitBody(SimplePascalParser.BodyContext ctx) { 
+		System.out.println("Body Visisted");
+		return visitChildren(ctx); 
+	}
+	
+	/*
+	 * STATEMENTS
+	 */
+	
+	@Override public Op visitAssStat(SimplePascalParser.AssStatContext ctx) { 
+		visitChildren(ctx);		
+		this.prog.addInstr(emit(OpCode.load, this.regs.get(ctx.expr()), this.regs.get(ctx.target())));		
+		return null;
+	}
+	
+	@Override public Op visitIdTarget(SimplePascalParser.IdTargetContext ctx) { 
+		this.regs.put(ctx, this.regs.get(ctx.ID()));
+		return null;
+	}
+	
+	/*
+	 * EXPR
+	 */
+
+	@Override public Op visitPrfExpr(SimplePascalParser.PrfExprContext ctx) { 
+		visitChildren(ctx);
+		
+		Reg resultReg = reg(ctx);
+		Reg expr = regs.get(ctx.expr());
+		Op result = visit(ctx.prfOp());
+		
+		this.prog.addInstr(emit(result.getOpCode(), expr, result.getOpnds().get(0), resultReg));		
+		return null;
+	}
+
+	
+	@Override public Op visitMultExpr(SimplePascalParser.MultExprContext ctx) { 
+		visitChildren(ctx);
+		
+		Reg resultReg = reg(ctx);
+		Reg expr1 = regs.get(ctx.expr(0));
+		Reg expr2 = regs.get(ctx.expr(1));
+		Op result = visit(ctx.multOp());
+		
+		this.prog.addInstr(emit(result.getOpCode(), expr1, expr2, resultReg));		
+		return null;
+	}
+
+	@Override public Op visitPlusExpr(SimplePascalParser.PlusExprContext ctx) { 
+		visitChildren(ctx);
+		
+		Reg resultReg = reg(ctx);
+		Reg expr1 = regs.get(ctx.expr(0));
+		Reg expr2 = regs.get(ctx.expr(1));
+		Op result = visit(ctx.plusOp());
+		
+		this.prog.addInstr(emit(result.getOpCode(), expr1, expr2, resultReg));		
+		return null;
+	}
+	
+	@Override public Op visitCompExpr(SimplePascalParser.CompExprContext ctx) { 
+		visitChildren(ctx);
+		
+		Reg resultReg = reg(ctx);
+		Reg expr1 = regs.get(ctx.expr(0));
+		Reg expr2 = regs.get(ctx.expr(1));
+		Op result = visit(ctx.compOp());
+		
+		this.prog.addInstr(emit(result.getOpCode(), expr1, expr2, resultReg));		
+		return null;
+	}
+	
+	@Override public Op visitBoolExpr(SimplePascalParser.BoolExprContext ctx) { 
+		visitChildren(ctx);
+		
+		Reg resultReg = reg(ctx);
+		Reg expr1 = regs.get(ctx.expr(0));
+		Reg expr2 = regs.get(ctx.expr(1));
+		Op result = visit(ctx.boolOp());
+		
+		this.prog.addInstr(emit(result.getOpCode(), expr1, expr2, resultReg));		
+		return null;
+	}
+	
+	@Override public Op visitParExpr(SimplePascalParser.ParExprContext ctx) { 
+		visitChildren(ctx);
+		this.regs.put(ctx, reg(ctx.expr()));
+		return null;
+	}
+	
+	@Override public Op visitFalseExpr(SimplePascalParser.FalseExprContext ctx) { 
+		this.prog.addInstr(emit(OpCode.loadI, new Num(0), reg(ctx)));		
+		return null;
+	}
+	
+	@Override public Op visitTrueExpr(SimplePascalParser.TrueExprContext ctx) { 
+		this.prog.addInstr(emit(OpCode.loadI, new Num(-1), reg(ctx)));		
+		return null;
+	}
+
+	@Override public Op visitIdExpr(SimplePascalParser.IdExprContext ctx) { 
+		this.regs.put(ctx, reg(ctx.ID()));
+		return null;
+	}
+	
+	@Override public Op visitNumExpr(SimplePascalParser.NumExprContext ctx) { 
+		this.regs.put(ctx, reg(ctx.NUM()));
+		return null;
+	}
+	
+	/*
+	 * OPERATORS
+	 */
+	
+	@Override public Op visitPrfOp(SimplePascalParser.PrfOpContext ctx) { 
+		Op result = null;
+		
+		if(ctx.MINUS() != null) 	result = new Op(OpCode.multI, new Num(-1));
+		else if(ctx.NOT() != null) 	result = new Op(OpCode.xorI, new Num(-1));
+		
+		return result;
+	}
+
+	@Override public Op visitMultOp(SimplePascalParser.MultOpContext ctx) { 
+		Op result = null;
+		
+		if(ctx.STAR() != null) 			result = new Op(OpCode.mult);
+		else if(ctx.SLASH() != null) 	result = new Op(OpCode.div);
+		
+		return result;
+	}
+
+	@Override public Op visitPlusOp(SimplePascalParser.PlusOpContext ctx) { 
+		Op result = null;
+		
+		if(ctx.PLUS() != null) 			result = new Op(OpCode.add);
+		else if(ctx.MINUS() != null) 	result = new Op(OpCode.sub);
+		
+		return result;
+	}
+	
+	@Override public Op visitBoolOp(SimplePascalParser.BoolOpContext ctx) { 
+		Op result = null;
+		
+		if(ctx.OR() != null) 		result = new Op(OpCode.or);
+		else if(ctx.AND() != null) 	result = new Op(OpCode.and);
+		
+		return result;
+	}
+	
+	@Override public Op visitCompOp(SimplePascalParser.CompOpContext ctx) {
+		Op result = null;
+		
+		if(ctx.EQ() != null) 		result = new Op(OpCode.cmp_EQ);
+		else if(ctx.GE() != null) 	result = new Op(OpCode.cmp_GE);
+		else if(ctx.GT() != null) 	result = new Op(OpCode.cmp_GT);
+		else if(ctx.LE() != null) 	result = new Op(OpCode.cmp_GE);
+		else if(ctx.LT() != null) 	result = new Op(OpCode.cmp_LT);
+		else if(ctx.NE() != null) 	result = new Op(OpCode.cmp_NE);
+			
+		return result;
+	}
+	
+	/*
+	 * DECLARATION
+	 */
+	
+	public Op visitVar(SimplePascalParser.VarContext ctx) {
+		for(int i = 0; i < ctx.ID().size(); i++)
+			this.prog.addInstr(emit(OpCode.loadI, new Num(0), reg(ctx.ID(i))));
+		
+		return null;
+	}
+	
+	
+	/*
+	 * --
+	 * EINDE
+	 * --
+	 */
+	
+	
 
 	// Override the visitor methods
 	/** Constructs an operation from the parameters 
