@@ -183,12 +183,24 @@ public class Checker extends SimplePascalBaseListener {
 			setEntry(node, entry(ctx.stat(i)));
 			node = ctx.stat(i);
 		}
-		
-		
+		setEntry(ctx, entry(ctx.stat(0)));
 	}
 	
+	
+	@Override public void exitOutStat(SimplePascalParser.OutStatContext ctx) { 
+		setEntry(ctx, ctx);
+	}
+	
+	@Override public void exitInStat(SimplePascalParser.InStatContext ctx) {
+		setEntry(ctx, ctx);
+	}
+	
+	
+	
 	@Override public void exitBlockStat(SimplePascalParser.BlockStatContext ctx) { 
+	
 		setEntry(ctx, entry(ctx.block()));
+		
 	}
 	
 	
