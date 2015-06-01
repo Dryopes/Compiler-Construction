@@ -16,7 +16,7 @@ import pp.block5.cc.simple.Type;
 
 @SuppressWarnings("javadoc")
 public class SimpleCheckerTest {
-	private final static String BASE_DIR = "pp/block5/cc/sample";
+	private final static String BASE_DIR = "src/pp/block5/cc/sample";
 	private final static String EXT = ".pascal";
 	private final SimplePascalCompiler compiler = SimplePascalCompiler
 			.instance();
@@ -27,6 +27,7 @@ public class SimpleCheckerTest {
 		Result result = check(tree);
 		ParseTree body = tree.getChild(3).getChild(1);
 		ParseTree assX = body.getChild(1);
+		
 		assertEquals(assX.getChild(2), result.getEntry(body));
 		assertEquals(assX.getChild(2), result.getEntry(assX));
 		assertEquals(Type.INT, result.getType(assX.getChild(0)));

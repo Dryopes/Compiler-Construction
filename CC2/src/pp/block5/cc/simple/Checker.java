@@ -10,6 +10,9 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import pp.block5.cc.ParseException;
 import pp.block5.cc.pascal.SimplePascalBaseListener;
+import pp.block5.cc.pascal.SimplePascalParser;
+import pp.block5.cc.pascal.SimplePascalParser.*;
+
 /** Class to type check and calculate flow entries and variable offsets. */
 public class Checker extends SimplePascalBaseListener {
 	/** Result of the latest call of {@link #check}. */
@@ -122,6 +125,91 @@ public class Checker extends SimplePascalBaseListener {
 		setType(ctx, Type.BOOL);
 		setEntry(ctx, ctx);
 	}
+	
+	/*--------------
+	 * TOEGEVOEGD
+	 * -------------
+	 */
+	
+	@Override 
+	public void exitVarDecl(SimplePascalParser.VarDeclContext ctx) { 
+		setEntry(ctx, entry(ctx.var(0)));
+	}
+	
+	@Override
+	public void exitIntType(IntTypeContext ctx) {
+		setType(ctx, Type.INT);
+		setEntry(ctx, ctx);
+	}
+	
+	@Override 
+	public void exitIdTarget(SimplePascalParser.IdTargetContext ctx) { 
+		setType(ctx, this.scope.type(ctx.ID().getText()));
+		setEntry(ctx, ctx);
+	}
+	
+	@Override 
+	public void exitVar(SimplePascalParser.VarContext ctx) {
+		Type type = getType(ctx.type());
+		for(int i = 0; i < ctx.ID().size(); i++) {
+			this.scope.put(ctx.ID(i).getText(), type);
+		}
+		//setType(ctx, getType(ctx.type()));
+		setEntry(ctx, ctx);
+	}
+	
+	@Override 
+	public void exitAssStat(SimplePascalParser.AssStatContext ctx) { 
+		checkType(ctx.expr(), getType(ctx.target()));
+		setEntry(ctx, ctx);
+	}
+	
+	@Override 
+	public void exitIfStat(SimplePascalParser.IfStatContext ctx) { 
+		checkType(ctx.expr(), Type.BOOL);
+		setEntry(ctx, entry(ctx.stat(0)));
+		setEntry(ctx, entry(ctx.stat(1)));
+	}
+	
+	@Override 
+	public void exitWhileStat(SimplePascalParser.WhileStatContext ctx) { 
+		checkType(ctx.expr(), Type.BOOL);
+		setEntry(ctx, entry(ctx.expr()));
+	}
+	
+	@Override public void exitBlock(SimplePascalParser.BlockContext ctx) {
+		ParserRuleContext node = ctx;
+		for(int i = 0; i < ctx.stat().size(); i++) {
+			setEntry(node, entry(ctx.stat(i)));
+			node = ctx.stat(i);
+		}
+		
+		
+	}
+	
+	@Override public void exitBlockStat(SimplePascalParser.BlockStatContext ctx) { 
+		setEntry(ctx, entry(ctx.block()));
+	}
+	
+	
+	@Override public void exitBody(SimplePascalParser.BodyContext ctx) { 
+		ParserRuleContext node = ctx;
+		for(int i = 0; i < ctx.decl().size(); i++) {
+			setEntry(node, entry(ctx.decl(i)));
+			node = ctx.decl(i);
+		}
+		setEntry(node, entry(ctx.block()));
+	}
+	
+	/*@Override 
+	public void exitProgram(SimplePascalParser.ProgramContext ctx) { 
+		setEntry(ctx, entry(ctx.body()));
+	}*/
+	
+	/*
+	 * END END END END
+	 */
+	
 
 	/** Indicates if any errors were encountered in this tree listener. */
 	public boolean hasErrors() {
