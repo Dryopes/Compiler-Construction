@@ -1,5 +1,8 @@
 package pp.block5.cc.simple;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -36,15 +39,16 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	private int regCount;
 	/** Association of expression and target nodes to registers. */
 	private ParseTreeProperty<Reg> regs;
+	private Map<String, Reg> varRegs;
 
 	public Program generate(ParseTree tree, Result checkResult) {
 		this.prog = new Program();
 		this.checkResult = checkResult;
 		this.regs = new ParseTreeProperty<>();
+		this.varRegs = new HashMap<String, Reg>();
 		this.labels = new ParseTreeProperty<>();
 		this.regCount = 0;
 		tree.accept(this);
-		System.out.println("(generator)Pretty Print: " + prog.prettyPrint());
 		return this.prog;
 	}
 	/*
@@ -73,12 +77,13 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	
 	@Override public Op visitAssStat(SimplePascalParser.AssStatContext ctx) { 
 		visitChildren(ctx);		
-		this.prog.addInstr(emit(OpCode.load, this.regs.get(ctx.expr()), this.regs.get(ctx.target())));		
+		this.prog.addInstr(emit(OpCode.loadAO, this.regs.get(ctx.expr()), arp, this.regs.get(ctx.target())));		
 		return null;
 	}
 	
 	@Override public Op visitIdTarget(SimplePascalParser.IdTargetContext ctx) { 
-		this.regs.put(ctx, this.regs.get(ctx.ID()));
+		System.out.println("Id: " + ctx.ID().getText() + " and reg: " + this.varRegs.get(ctx.ID().getText()));
+		this.regs.put(ctx, this.varRegs.get(ctx.ID().getText()));
 		return null;
 	}
 	
@@ -163,12 +168,12 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	}
 
 	@Override public Op visitIdExpr(SimplePascalParser.IdExprContext ctx) { 
-		this.regs.put(ctx, reg(ctx.ID()));
+		this.regs.put(ctx, varRegs.get(ctx.ID().getText()));
 		return null;
 	}
 	
 	@Override public Op visitNumExpr(SimplePascalParser.NumExprContext ctx) { 
-		this.regs.put(ctx, reg(ctx.NUM()));
+		this.prog.addInstr(emit(OpCode.loadI, new Num(Integer.parseInt(ctx.getText())), reg(ctx)));	
 		return null;
 	}
 	
@@ -230,8 +235,11 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	 */
 	
 	public Op visitVar(SimplePascalParser.VarContext ctx) {
-		for(int i = 0; i < ctx.ID().size(); i++)
-			this.prog.addInstr(emit(OpCode.loadI, new Num(0), reg(ctx.ID(i))));
+		for(int i = 0; i < ctx.ID().size(); i++) {
+			String varName = ctx.ID(i).getText();
+			this.varRegs.put(varName, new Reg("r_" + varName));
+			this.prog.addInstr(emit(OpCode.loadI, new Num(0), this.varRegs.get(varName)));
+		}
 		
 		return null;
 	}
