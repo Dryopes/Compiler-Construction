@@ -161,7 +161,8 @@ public class Checker extends SimplePascalBaseListener {
 	@Override 
 	public void exitAssStat(SimplePascalParser.AssStatContext ctx) { 
 		checkType(ctx.expr(), getType(ctx.target()));
-		setEntry(ctx, ctx);
+		setEntry(ctx, entry(ctx.expr()));
+		setOffset(ctx.target(), scope.offset(ctx.target().getText()));
 	}
 	
 	@Override 
@@ -178,11 +179,11 @@ public class Checker extends SimplePascalBaseListener {
 	}
 	
 	@Override public void exitBlock(SimplePascalParser.BlockContext ctx) {
-		ParserRuleContext node = ctx;
-		for(int i = 0; i < ctx.stat().size(); i++) {
-			setEntry(node, entry(ctx.stat(i)));
-			node = ctx.stat(i);
-		}
+//		ParserRuleContext node = ctx;
+//		for(int i = 0; i < ctx.stat().size(); i++) {
+//			setEntry(node, entry(ctx.stat(i)));
+//			node = ctx.stat(i);
+//		}
 		setEntry(ctx, entry(ctx.stat(0)));
 	}
 	
