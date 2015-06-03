@@ -41,13 +41,13 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	private int regCount;
 	/** Association of expression and target nodes to registers. */
 	private ParseTreeProperty<Reg> regs;
-	private Map<String, Reg> varRegs;
+	//private Map<String, Reg> varRegs;
 
 	public Program generate(ParseTree tree, Result checkResult) {
 		this.prog = new Program();
 		this.checkResult = checkResult;
 		this.regs = new ParseTreeProperty<>();
-		this.varRegs = new HashMap<String, Reg>();
+		//this.varRegs = new HashMap<String, Reg>();
 		this.labels = new ParseTreeProperty<>();
 		this.regCount = 0;
 		tree.accept(this);
@@ -71,19 +71,38 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 		return visitChildren(ctx); 
 	}
 	
+	@Override public Op visitBlock(SimplePascalParser.BlockContext ctx) {
+		Op nextLabel = null;
+		for(SimplePascalParser.StatContext stat : ctx.stat()) {
+			int labelPos = this.prog.getInstr().size();
+			
+			Op result = visit(stat);
+			
+			if(nextLabel != null) {
+				this.prog.getInstr().get(labelPos).setLabel(nextLabel.getLabel());
+			}			
+			nextLabel = result;
+		}
+		if(nextLabel != null) {
+			this.prog.addInstr(nextLabel);
+		}
+		
+		return null;
+	}
+	
 	/*
 	 * STATEMENTS
 	 */
 	
 	@Override public Op visitAssStat(SimplePascalParser.AssStatContext ctx) { 
-		visitChildren(ctx);		
-		emit(OpCode.i2i, this.regs.get(ctx.expr()), this.regs.get(ctx.target()));		
+		visit(ctx.expr());
+		emit(OpCode.storeAI, regs.get(ctx.expr()), arp, offset(ctx.target()));
 		return null;
 	}
 	
 	@Override public Op visitIdTarget(SimplePascalParser.IdTargetContext ctx) { 
-		System.out.println("Id: " + ctx.ID().getText() + " and reg: " + this.varRegs.get(ctx.ID().getText()));
-		this.regs.put(ctx, this.varRegs.get(ctx.ID().getText()));
+		System.out.println("Id: " + ctx.ID().getText() + " and reg: " + reg(ctx.ID()));
+		this.emit(OpCode.loadAI, arp, offset(ctx), reg(ctx));
 		return null;
 	}
 	
@@ -91,16 +110,23 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 		Label start = createLabel(ctx, "start");
 		Label body = createLabel(ctx, "body");
 		Label end = createLabel(ctx, "end");
-		
-		emit(start, OpCode.nop);
-		visit(ctx.expr());		
+		int labelInstr = this.prog.getInstr().size();
+				
+		//emit(start, OpCode.nop);
+		visit(ctx.expr());	
+		this.prog.getInstr().get(labelInstr).setLabel(start);		
 		emit(OpCode.cbr, this.regs.get(ctx.expr()), body, end);
-		emit(body, OpCode.nop);
-		visit(ctx.stat());
-		emit(OpCode.jumpI, start);
-		emit(end, OpCode.nop);
+		labelInstr = this.prog.getInstr().size();
 		
-		return null;
+		//emit(body, OpCode.nop);		
+		
+		visit(ctx.stat());
+		this.prog.getInstr().get(labelInstr).setLabel(body);
+		
+		emit(OpCode.jumpI, start);
+		//emit(end, OpCode.nop);
+		
+		return new Op(end, OpCode.nop);
 	}
 	
 	@Override public Op visitIfStat(SimplePascalParser.IfStatContext ctx) {
@@ -108,23 +134,37 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 		Label elseL = createLabel(ctx, "else");
 		Label end	= createLabel(ctx, "end");
 		
-		visit(ctx.expr());
-		emit(OpCode.cbr, this.regs.get(ctx.expr()), thenL, elseL);
-		emit(thenL, OpCode.nop);
-		visit(ctx.stat(0));
-		emit(OpCode.jumpI, end);
-		emit(elseL, OpCode.nop);
-		visit(ctx.stat(1));
-		emit(end, OpCode.nop);
 		
-		return null;
+		visit(ctx.expr());
+		
+		if(ctx.ELSE() != null)
+			emit(OpCode.cbr, this.regs.get(ctx.expr()), thenL, elseL);
+		else
+			emit(OpCode.cbr, this.regs.get(ctx.expr()), thenL, end);
+		
+		
+		int lastInstr = this.prog.getInstr().size();
+		visit(ctx.stat(0));
+		this.prog.getInstr().get(lastInstr).setLabel(thenL);
+		
+		emit(OpCode.jumpI, end);
+		
+		if(ctx.ELSE() != null) {
+			lastInstr = this.prog.getInstr().size();
+			visit(ctx.stat(1));
+			this.prog.getInstr().get(lastInstr).setLabel(elseL);
+		}
+		
+		//emit(end, OpCode.nop);
+		
+		return new Op(end, OpCode.nop);
 	}
 	
 	@Override public Op visitInStat(SimplePascalParser.InStatContext ctx) { 
-		visitChildren(ctx);
-		
+		//visitChildren(ctx);		
 		String text = ctx.STR().getText();
-		emit(OpCode.in, new Str(text.substring(1, text.length()-1)), this.regs.get(ctx.target()));
+		emit(OpCode.in, new Str(text.substring(1, text.length()-1)), reg(ctx));
+		emit(OpCode.storeAI, reg(ctx), arp, offset(ctx.target()));
 		return null;
 	}
 
@@ -217,7 +257,7 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	}
 
 	@Override public Op visitIdExpr(SimplePascalParser.IdExprContext ctx) { 
-		this.regs.put(ctx, varRegs.get(ctx.ID().getText()));
+		emit(OpCode.loadAI, arp, offset(ctx), reg(ctx));	
 		return null;
 	}
 	
@@ -284,11 +324,16 @@ public class Generator extends SimplePascalBaseVisitor<Op> {
 	 */
 	
 	public Op visitVar(SimplePascalParser.VarContext ctx) {
-		for(int i = 0; i < ctx.ID().size(); i++) {
+		for(TerminalNode id : ctx.ID()) {
+			emit(OpCode.storeAI, arp, arp, offset(id));
+		}
+		
+		/*for(int i = 0; i < ctx.ID().size(); i++) {
 			String varName = ctx.ID(i).getText();
 			this.varRegs.put(varName, new Reg("r_" + varName));
 			emit(OpCode.loadI, new Num(0), this.varRegs.get(varName));
-		}
+			
+		}*/
 		
 		return null;
 	}

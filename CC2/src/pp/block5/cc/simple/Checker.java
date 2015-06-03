@@ -141,6 +141,7 @@ public class Checker extends SimplePascalBaseListener {
 		Type type = getType(ctx.type());
 		for(int i = 0; i < ctx.ID().size(); i++) {
 			this.scope.put(ctx.ID(i).getText(), type);
+			setOffset(ctx.ID(i), scope.offset(ctx.ID(i).getText()));
 		}
 		setEntry(ctx, ctx);
 	}
@@ -154,6 +155,7 @@ public class Checker extends SimplePascalBaseListener {
 	@Override 
 	public void exitIdTarget(SimplePascalParser.IdTargetContext ctx) { 
 		setType(ctx, this.scope.type(ctx.ID().getText()));
+		setOffset(ctx, this.scope.offset(ctx.ID().getText()));
 		setEntry(ctx, ctx);
 	}
 	

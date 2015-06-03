@@ -4,5 +4,8 @@ Var x, y: Integer;
     
 Begin
     x := 0;
-    y := x
+    y := x;
+    
+    If x > y
+    Then x := x-y
 End.
