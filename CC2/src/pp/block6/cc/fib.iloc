@@ -1,0 +1,41 @@
+start:		in "Argument? " => r_arg
+			loadI 5 => r_back
+			push r_back
+			push r_arg
+			jumpI -> rec
+			pop => r_result
+			jumpI -> endprogram
+
+rec:		pop => r_arg
+			loadI 1 => r_one
+			cmp_LE r_arg, r_one => r_cmp
+			cbr r_cmp -> recif, recelse
+			nop
+recif:		loadI 1 => r_result
+			jumpI -> recend
+			
+recelse:	subI r_arg, 1 => r_arg
+			loadI 20 => r_back
+			push r_arg
+			push r_back
+			push r_arg
+			jumpI -> rec
+			pop => r_result						
+			
+			pop => r_arg
+			subI r_arg, 1 => r_arg
+			loadI 28 => r_back
+			push r_result
+			push r_back
+			push r_arg
+			jumpI -> rec
+			pop => r_resulttmp
+			pop => r_result
+			add r_result, r_resulttmp => r_result
+			
+recend:		pop => r_jump
+			push r_result
+			jump -> r_jump
+			
+endprogram:	out "", r_result
+		
